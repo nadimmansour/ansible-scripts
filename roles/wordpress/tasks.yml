@@ -1,0 +1,56 @@
+---
+
+- name: download wordpress
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /var/www/html
+    sudo: yes 
+
+- name: extract wordpress
+  unarchive:
+    src: /var/ww/html/latest.tar.gz
+    dest: /var/www/html
+    remote_src: true
+    sudo: yes
+
+- name: create a new database
+  mysql_db:
+    name=wpdb
+    state:present
+
+- name: create a new user for the database
+  mysql_user:
+    name: nadim
+    password: nadim2017
+    priv: '*.*:ALL'
+
+- name: make copy of config-sample.php
+  command: mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+  creates: /var/www/html/wordpress/wp-config.php
+  sudo: yes
+
+- name: Update WordPress config file
+  lineinfile:
+    dest=/var/www/wordpress/wp-config.php
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+  with_items:
+    - {'regexp': "define\\('DB_NAME', '(.)+'\\);", 'line': "define('DB_NAME', '{{wpdb}}');"}
+    - {'regexp': "define\\('DB_USER', '(.)+'\\);", 'line': "define('DB_USER', '{{nadim}}');"}
+    - {'regexp': "define\\('DB_PASSWORD', '(.)+'\\);", 'line': "define('DB_PASSWORD', '{{nadim2017}}');"}
+  sudo: yes
+
+- name: permissions 
+  command: chown -R www-data:www-data /var/www/html/
+  sudo: yes
+
+- name: Update default Apache site to know from where he sould read
+  lineinfile:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    regexp: "(.)+DocumentRoot /var/www/html"
+    line: "DocumentRoot /var/www/html/wordpress"
+    sudo: yes
+
+- name: restart apache
+  service: name=apache2 state=restarted
+  sudo: yes
