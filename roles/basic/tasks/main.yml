@@ -1,5 +1,4 @@
 ---
-
 - name: install and upgrade all apt packages at latest version
   apt:
      state:latest
