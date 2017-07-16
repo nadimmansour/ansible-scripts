@@ -2,6 +2,6 @@
 
 - name: install apache2
   apt: 
-     name:apache2
-     state:latest
-     sudo:yes 
+     name: apache2
+     state: latest
+  become: yes 

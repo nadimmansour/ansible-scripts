@@ -2,24 +2,24 @@
 
 - name: install php 
   apt: 
-     name:php
-     state:latest
-     sudo:yes
+     name: php
+     state: latest
+  become: yes
 
 - name: install libapache2-mod-php 
   apt: 
-     name:libapache2-mod-php
-     state:latest
-     sudo:yes
+     name: libapache2-mod-php
+     state: latest
+  become: yes
 
 - name: install php-mcrypt
   apt: 
-     name:php-mcrypt
-     state:latest
-     sudo:yes 
+     name: php-mcrypt
+     state: latest
+  become: yes 
 
 - name: install  php-mysql
   apt: 
-     name:php-mcrypt
-     state:latest
-     sudo:yes 
+     name: php-mcrypt
+     state: latest
+  become: yes 

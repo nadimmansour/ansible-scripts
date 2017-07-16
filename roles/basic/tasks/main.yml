@@ -1,6 +1,6 @@
 ---
 - name: install and upgrade all apt packages at latest version
   apt:
-     state:latest
-     update_cache:yes
-     sudo:yes
+     state: latest
+     update_cache: yes
+  become: yes

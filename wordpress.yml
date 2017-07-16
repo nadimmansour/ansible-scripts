@@ -2,8 +2,8 @@
 - hosts: all
   remote_user: vagrant
   roles:
-    - basic
-    - apache2
+    # - basic
+    # - apache2
     - mysql
-    - php
-    - wordpress
+    # - php
+    # - wordpress

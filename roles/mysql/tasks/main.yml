@@ -2,39 +2,41 @@
 
 - name: install  mysql server
   apt: 
-     name:mysql-server
-     state:latest
-     sudo:yes
+     name: mysql-server
+     state: latest
+  become: yes
 
 - name: install  mysql client
   apt: 
-    name:mysql-client
-    state:latest
-    sudo:yes
+    name: mysql-client
+    state: latest
+  become: yes
 
 - name: Change root user password on first run
-  mysql_user: login_user=root
-              login_password="{{ root_pass }}"
-              check_implicit_admin=yes
-              name=root
-              password={{ root_pass }}
-              priv=*.*:ALL,GRANT
-              host=localhost
+  mysql_user:
+    login_user: root
+    login_password: "{{ root_pass }}"
+    check_implicit_admin: yes
+    name: root
+    password: '{{ root_pass }}'
+    priv: '*.*:ALL,GRANT'
+    host: localhost
 
 - name: delete anonymous MySQL server user for {{ ansible_nodename }}
-  mysql_user: login_user=root
-              login_password='{{ root_pass }}'
-              check_implicit_admin=yes
-              user=''
-              host=localhost
-              state="absent"
+  mysql_user: 
+    login_user: root
+    login_password: '{{ root_pass }}'
+    check_implicit_admin: yes
+    user: ''
+    host: localhost
+    state: "absent"
   
 
 - name: Disallow root login remotely
-  command: 'mysql -ne "{{ item }}"'
+  command: 'mysql -u root -p "{{ root_pass }}" -ne "{{ item }}"'
   with_items:
     - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
-    - changed_when:False
+  changed_when: False
 
 - name: remove the MySQL test database
   action: mysql_db login_user=root login_password="{{ mysql_root }}" db=test state=absent
@@ -43,4 +45,4 @@
   command: 'mysql -ne "{{ item }}"'
   with_items:
     - FLUSH PRIVILEGES
-    - changed_when:False
+  changed_when: False
